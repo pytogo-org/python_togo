@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Partenaires — Python Togo{% endblock %}
+
+{% block content %}
+<div class="container partners-page">
+    <h1>Nos partenaires</h1>
+    <p>Nous remercions les organisations et individus qui nous font confiance.</p>
+
+    <section class="partners-grid">
+           {% if partners %}
+                {% for p in partners %}
+                    <div class="partner-card">
+                        {% if p.logo_url %}
+                            <a href="{{ p.website_url }}"><img src="{{ p.logo_url }}" alt="{{ p.name }}" class="partner-logo" width="200px"></a>
+                        {% else %}
+                            <div class="partner-placeholder">{{ p.name }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Aucun partenaire pour le moment.</p>
+            {% endif %}
+    </section>
+
+
+    <hr>
+
+    <section class="partner-request">
+        <h2>Demander un partenariat</h2>
+        <p>Vous souhaitez nous soutenir ou devenir partenaire ? Envoyez votre demande ci-dessous.</p>
+
+        <form id="partnership-form">
+            <label for="organization">Organisation</label>
+            <input type="text" id="organization" name="organization" required>
+
+            <label for="contact_name">Nom du contact</label>
+            <input type="text" id="contact_name" name="contact_name" required>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="website">Site web (optionnel)</label>
+            <input type="url" id="website" name="website">
+
+            <label for="message">Message (optionnel)</label>
+            <textarea id="message" name="message" rows="4"></textarea>
+
+            <button type="submit">Envoyer la demande</button>
+        </form>
+
+        <div id="partnership-result" role="status" aria-live="polite"></div>
+    </section>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('partnership-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const form = e.target;
+    const data = {
+        organization: form.organization.value,
+        contact_name: form.contact_name.value,
+        email: form.email.value,
+        website: form.website.value || null,
+        message: form.message.value || null
+    };
+
+    const resEl = document.getElementById('partnership-result');
+    resEl.textContent = 'Envoi en cours...';
+
+    try {
+        const resp = await fetch('/api/v1/partnership', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        if (resp.ok) {
+            resEl.textContent = 'Demande envoyée, merci !';
+            form.reset();
+        } else {
+            const txt = await resp.text();
+            resEl.textContent = 'Erreur: ' + txt;
+        }
+    } catch (err) {
+        resEl.textContent = 'Erreur réseau: ' + err.message;
+    }
+});
+</script>
+{% endblock %}

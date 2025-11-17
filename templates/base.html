@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Python Togo{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="shortcut icon" href="static/images/favicon.ico" type="image/x-icon">
+
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-area">
+                    <a href="/" aria-label="Accueil">
+                        <img src="static/images/Py.png" alt="" width="120px">
+                    </a>
+                    
+                </div>
+
+                <button class="mobile-toggle" onclick="toggleMobileMenu()">☰</button>
+
+                <nav id="main-nav">
+                    <ul>
+                        <li><a href="/">Accueil</a></li>
+                        <li><a href="/about">À propos</a></li>
+                        <li><a href="/partners">Partenaires</a></li>
+                        <li><a href="/code-of-conduct">Code de conduite</a></li>
+                        <li><a href="/events">Événements</a></li>
+                        <li><a href="/actualities">Actualités</a></li>
+                        <li><a href="/gallery">Galerie</a></li>
+                        <li><a href="/join">Adhérer</a></li>
+                        <li><a href="/contact">Contact</a></li>
+
+                        <li>
+                            <div class="lang-switch">
+                                <button class="active" onclick="switchLanguage('fr')">FR</button>
+                                <button onclick="switchLanguage('en')">EN</button>
+                            </div>
+                        </li>
+                        <li>
+                            <div id="donate-button"></div>
+                                <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
+<script>
+PayPal.Donation.Button({
+env:'production',
+hosted_button_id:'PYDWFGRBP25TL',
+image: {
+src:'https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif',
+alt:'Donate with PayPal button',
+title:'PayPal - The safer, easier way to pay online!',
+}
+}).render('#donate-button');
+</script>
+
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>À propos</h4>
+                    <p>Python Togo promeut le langage de programmation Python au Togo.</p>
+                        <div style="margin-top: 15px;"><a href="https://www.paypal.com/donate/?hosted_button_id=A6547S7YGMZ4A" target="_blank"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt=""></a></div>
+
+                </div>
+                <div class="footer-section">
+                    <h4>Liens</h4>
+                    <ul>
+                        <li><a href="/">Accueil</a></li>
+                        <li><a href="/partners">Partenaires</a></li>
+                        <li><a href="/code-of-conduct">Code de conduite</a></li>
+                        <li><a href="/events">Événements</a></li>
+                        <li><a href="/actualities">Actualités</a></li>
+                        <li><a href="/gallery">Galerie</a></li>
+                        <li><a href="/communities">Communautés</a></li>
+                        <li><a href="/join">Adhérer</a></li>
+                        <li><a href="https://drive.google.com/drive/folders/1Y20FxmO0GLsKgRjozf_WmLbPuFAuGV_P?usp=sharing">Logos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li>Email: contact@pytogo.org</li>
+                        <li>Lomé, Togo</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="social-links" aria-label="Réseaux sociaux">
+                        <a href="https://www.linkedin.com/company/python-togo" class="social-link" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"
+                                fill="currentColor">
+                                <path
+                                    d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z" />
+                            </svg>
+                        </a>
+                        <!-- Instagram (inline SVG) -->
+                        <a href="https://www.instagram.com/pycontg/" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                            <svg width="30" height="30" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="social-icon" aria-hidden="true">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="currentColor" stroke-width="1.6" fill="none"/>
+                                <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6" fill="none"/>
+                                <circle cx="17.5" cy="6.5" r="1" fill="currentColor"/>
+                            </svg>
+                        </a>
+
+                        <a href="https://x.com/pytogo_org" class="social-link" aria-label="Twitter/X" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30"
+                                fill="currentColor">
+                                <path
+                                    d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                            </svg>
+                        </a>
+
+                        <a href="https://github.com/pytogo-org" class="social-link" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                viewBox="0 0 16 16">
+                                <path
+                                    d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+                            </svg>
+                        </a>
+                        <a href="https://www.youtube.com/@PythonTogo" class="social-link" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                viewBox="0 0 16 16">
+                                <path
+                                    d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z" />
+                            </svg>
+                        </a>
+
+                        <a rel="me" href="https://techhub.social/@pytogo_org" class="social-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc. -->
+                                <path
+                                    d="M433 179.11c0-97.2-63.71-125.7-63.71-125.7-62.52-28.7-228.56-28.4-290.48 0 0 0-63.72 28.5-63.72 125.7 0 115.7-6.6 259.4 105.63 289.1 40.51 10.7 75.32 13 103.33 11.4 50.81-2.8 79.32-18.1 79.32-18.1l-1.7-36.9s-36.31 11.4-77.12 10.1c-40.41-1.4-83-4.4-89.63-54a102.54 102.54 0 0 1-.9-13.9c85.63 20.9 158.65 9.1 178.75 6.7 56.12-6.7 105-41.3 111.23-72.9 9.8-49.8 9-121.5 9-121.5zm-75.12 125.2h-46.63v-114.2c0-49.7-64-51.6-64 6.9v62.5h-46.33V197c0-58.5-64-56.6-64-6.9v114.2H90.19c0-122.1-5.2-147.9 18.41-175 25.9-28.9 79.82-30.8 103.83 6.1l11.6 19.5 11.6-19.5c24.11-37.1 78.12-34.8 103.83-6.1 23.71 27.3 18.4 53 18.4 175z" />
+                            </svg>
+                        </a> 
+                                                <!-- Discord (inline SVG, matches other icons) -->
+                                                <a href="https://pytogo.org/discord" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Discord">
+                                                        <svg width="30" height="30" viewBox="0 0 71 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="social-icon" aria-hidden="true">
+                                                                <path d="M60.1045 13.8978C55.5792 11.8214 50.7265 10.2916 45.6527 9.41542C45.5603 9.39851 45.468 9.44077 45.4204 9.52529C44.7963 10.6353 44.105 12.0834 43.6209 13.2216C38.1637 12.4046 32.7345 12.4046 27.3892 13.2216C26.905 12.0581 26.1886 10.6353 25.5617 9.52529C25.5141 9.44359 25.4218 9.40133 25.3294 9.41542C20.2584 10.2888 15.4057 11.8186 10.8776 13.8978C10.8384 13.9147 10.8048 13.9429 10.7825 13.9795C1.57795 27.7309 -0.943561 41.1443 0.293408 54.3914C0.299005 54.4562 0.335386 54.5182 0.385761 54.5576C6.45866 59.0174 12.3413 61.7249 18.1147 63.5195C18.2071 63.5477 18.305 63.5139 18.3638 63.4378C19.7295 61.5728 20.9469 59.6063 21.9907 57.5383C22.0523 57.4172 21.9935 57.2735 21.8676 57.2256C19.9366 56.4931 18.0979 55.6 16.3292 54.5858C16.1893 54.5041 16.1781 54.304 16.3068 54.2082C16.679 53.9293 17.0513 53.6391 17.4067 53.3461C17.471 53.2926 17.5606 53.2813 17.6362 53.3151C29.2558 58.6202 41.8354 58.6202 53.3179 53.3151C53.3935 53.2785 53.4831 53.2898 53.5502 53.3433C53.9057 53.6363 54.2779 53.9293 54.6529 54.2082C54.7816 54.304 54.7732 54.5041 54.6333 54.5858C52.8646 55.6197 51.0259 56.4931 49.0921 57.2228C48.9662 57.2707 48.9102 57.4172 48.9718 57.5383C50.038 59.6034 51.2554 61.5699 52.5959 63.435C52.6519 63.5139 52.7526 63.5477 52.845 63.5195C58.6464 61.7249 64.529 59.0174 70.6019 54.5576C70.6551 54.5182 70.6887 54.459 70.6943 54.3942C72.1747 39.0791 68.2147 25.7757 60.1968 13.9823C60.1772 13.9429 60.1437 13.9147 60.1045 13.8978ZM23.7259 46.3253C20.2276 46.3253 17.3451 43.1136 17.3451 39.1693C17.3451 35.225 20.1717 32.0133 23.7259 32.0133C27.308 32.0133 30.1626 35.2532 30.1066 39.1693C30.1066 43.1136 27.28 46.3253 23.7259 46.3253ZM47.3178 46.3253C43.8196 46.3253 40.9371 43.1136 40.9371 39.1693C40.9371 35.225 43.7636 32.0133 47.3178 32.0133C50.9 32.0133 53.7545 35.2532 53.6986 39.1693C53.6986 43.1136 50.9 46.3253 47.3178 46.3253Z" fill="currentColor"/>
+                                                        </svg>
+                                                </a>
+                                                <!-- Facebook (simple 'f' only, no circle) -->
+                                                <a href="https://web.facebook.com/profile.php?id=61583905225784" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                                                        <svg width="30" height="30" viewBox="0 0 320 512" xmlns="http://www.w3.org/2000/svg" class="social-icon" aria-hidden="true">
+                                                                <path d="M279.14 288l14.22-92.66h-88.91V142.2c0-25.35 12.42-50.06 52.24-50.06H303V6.26S275.2 0 248.79 0c-73 0-121.06 44.38-121.06 124.72v69.62H76v92.66h51.73V512h100.2V288z" fill="currentColor"/>
+                                                        </svg>
+                                                </a>
+            </div>
+
+            <div class="footer-bottom">
+               
+                <div>
+                    Logo conçu avec ❤️ par <a href="https://www.linkedin.com/in/mawy7/" target="_blank">Mannie Young</a>
+                </div>
+                <div>
+                    Ce site a été conçu et développé avec ❤️ par <a href="https://www.linkedin.com/in/wasscodeur/?locale=en" target="_blank">Wachiou Bouraima </a> and <a href="https://www.linkedin.com/in/geoffreylgv/" target="_blank">Geoffrey Logovi</a> à l'aide de <a href="https://fastapi.tiangolo.com/" target="_blank">FastAPI</a> et déployé sur <a href="https://vercel.com/" target="_blank">Vercel</a>
+                </div>
+                <p class="copy">&copy; {{ current_year }} Python Software Community Togo. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            document.getElementById('main-nav').classList.toggle('active');
+        }
+
+        // Basic language switcher hook (kept simple)
+        function switchLanguage(lang) {
+            localStorage.setItem('lang', lang);
+            document.querySelectorAll('.lang-switch button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

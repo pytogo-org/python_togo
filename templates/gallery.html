@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Galerie — Python Togo{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Galerie</h1>
+    <p>Découvrez les photos de nos événements et rencontres. Cliquez sur le lien ci-dessous pour accéder à notre album.</p>
+
+    <div class="gallery-actions">
+        <!-- If you have an external album (Google Photos, Flickr, Imgur, etc.), paste the URL here -->
+        <p>
+            <a id="external-gallery-link" class="btn btn-secondary" href="#" target="_blank" rel="noopener noreferrer">Voir notre galerie (à venir)</a>
+        </p>
+    </div>
+
+    <hr>
+
+    <section>
+        <h2>Vignettes récentes</h2>
+        <p>Si vous souhaitez ajouter des photos directement sur le site, mettez les images dans `static/images/gallery` et elles apparaîtront ici automatiquement.</p>
+        <div class="card-grid">
+            {% set gallery_dir = 'static/images/gallery' %}
+            {% for gallery in galleries %}
+                <div class="card">
+                    <div class="card-meta">{{ gallery.date }}</div>
+                    <h3>{{ gallery.title }}</h3>
+                    <p> <img src="{{ gallery.image }}" alt="" width="100%"></p>
+                    <div class="card-actions">
+                        <a href="{{ gallery.link }}" class="btn btn-secondary">Voir</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Placeholder: if you want to set an external gallery link dynamically, you can set it in localStorage
+(function(){
+    const link = localStorage.getItem('externalGallery') || '#';
+    const a = document.getElementById('external-gallery-link');
+    if (link && link !== '#') {
+        a.href = link;
+        a.textContent = 'Voir notre galerie';
+    } else {
+        a.href = '#';
+        a.classList.add('disabled');
+    }
+})();
+</script>
+{% endblock %}

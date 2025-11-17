@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Accueil - Python Togo{% endblock %}
+
+{% block content %}
+    <section class="container">
+        <div class="intro">
+            <h1>Bienvenue sur Python Togo</h1>
+            <p>Python Togo est une communauté de développeurs et passionnés Python au Togo. Nous organisons des événements, des formations et promouvons l'usage de Python dans notre pays.</p>
+            <p>
+                <a href="/join" class="btn">Rejoindre la communauté</a>
+                <a href="/events" class="btn btn-secondary">Voir les événements</a>
+            </p>
+        </div>
+    </section>
+
+   
+    <section class="container">
+        <h2>Actualités récentes</h2>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-meta">2025-11-01</div>
+                <h3>Lancement d'un nouvel atelier Python</h3>
+                <p>Nous organisons un atelier sur les bases de Python et l'automatisation.</p>
+                <div class="card-actions">
+                    <a href="/actualites" class="btn btn-secondary">Voir toutes les actualités</a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-meta">2025-09-15</div>
+                <h3>Rencontre communautaire à Lomé</h3>
+                <p>Retour sur la rencontre mensuelle et les projets présentés par les membres.</p>
+                <div class="card-actions">
+                    <a href="/actualites" class="btn btn-secondary">Voir toutes les actualités</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+     <section class="container">
+        <h2>Nos partenaires</h2>
+        <div class="partners-grid">
+            {% if partners %}
+                {% for p in partners %}
+                    <div class="partner-card">
+                        {% if p.logo_url %}
+                            <a href="{{ p.website_url }}"><img src="{{ p.logo_url }}" alt="{{ p.name }}" class="partner-logo"></a>
+                        {% else %}
+                            <div class="partner-placeholder">{{ p.name }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Aucun partenaire pour le moment.</p>
+            {% endif %}
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Keep header mobile toggle available
+    document.addEventListener('DOMContentLoaded', function(){
+        const btn = document.querySelector('.mobile-toggle');
+        if (btn) btn.addEventListener('click', function(){ document.getElementById('main-nav').classList.toggle('active'); });
+    });
+</script>
+{% endblock %}

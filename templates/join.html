@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Adhérer - Python Togo{% endblock %}
+
+{% block content %}
+    <section class="container">
+        <h2>Adhérer</h2>
+        <p>Rejoignez la communauté Python Togo en remplissant le formulaire ci-dessous.</p>
+        <div class="form-container">
+            <form id="join-form" method="post" action="/api/v1/join">
+                <div class="form-group">
+                    <label for="name">Nom complet *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="city">Ville</label>
+                    <input type="text" id="city" name="city">
+                </div>
+                <div class="form-group">
+                    <label for="level">Niveau Python</label>
+                    <select id="level" name="level">
+                        <option value="beginner">Débutant</option>
+                        <option value="intermediate">Intermédiaire</option>
+                        <option value="advanced">Avancé</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">Envoyer</button>
+            </form>
+        </div>
+    </section>
+{% endblock %}

@@ -15,7 +15,11 @@ pip install -r requirements.txt
 ```sh
 uvicorn main:app --reload --host 127.0.0.1 --port 8000
 ```
+or
 
+```sh
+fastapi dev
+```
 3. Open http://127.0.0.1:8000 in your browser.
 
 4. Development

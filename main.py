@@ -1,3 +1,17 @@
+"""
+Python Togo FastAPI application.
+
+This module defines a small FastAPI server that serves HTML templates,
+static assets, and a few JSON API endpoints for events, news, communities,
+and basic forms (join, contact, partnership).
+
+Notes
+-----
+- Translations are stored in-memory in `TRANSLATIONS` and selected via
+    cookie or `Accept-Language`.
+- Sample data for events and news is kept in-memory for simplicity.
+"""
+
 from datetime import date
 from typing import List, Optional
 
@@ -763,6 +777,19 @@ DONATE_URL = "https://www.paypal.com/donate/?hosted_button_id=A6547S7YGMZ4A"
 
 
 def get_language(request: Request) -> str:
+    """
+    Determine the preferred language for the request.
+
+    Parameters
+    ----------
+    request : fastapi.Request
+        The incoming HTTP request.
+
+    Returns
+    -------
+    str
+        The language code ("fr" or "en"). Defaults to "fr" if none matched.
+    """
     cookie_lang = request.cookies.get("lang")
     if cookie_lang in TRANSLATIONS:
         return cookie_lang
@@ -780,6 +807,21 @@ def get_language(request: Request) -> str:
 
 @app.get("/lang/{lang_code}")
 async def set_language(lang_code: str, request: Request):
+    """
+    Set the UI language preference via cookie and redirect back.
+
+    Parameters
+    ----------
+    lang_code : str
+        Language code to set ("fr" or "en").
+    request : fastapi.Request
+        The incoming request, used to read referer.
+
+    Returns
+    -------
+    fastapi.responses.RedirectResponse
+        Redirects to the referer while setting the `lang` cookie.
+    """
     if lang_code not in TRANSLATIONS:
         raise HTTPException(status_code=404, detail="Language not supported")
     referer = request.headers.get("referer") or "/"
@@ -791,6 +833,21 @@ async def set_language(lang_code: str, request: Request):
 
 
 def ctx(request: Request, extra: Optional[dict] = None) -> dict:
+    """
+    Build the template context dictionary.
+
+    Parameters
+    ----------
+    request : fastapi.Request
+        The incoming request used to derive language and cookies.
+    extra : dict, optional
+        Additional context values to merge.
+
+    Returns
+    -------
+    dict
+        The context including year, language, translations, and extras.
+    """
     lang = get_language(request)
     base = {
         "current_year": current_year,
@@ -944,6 +1001,31 @@ CONTACT_MESSAGES: List[dict] = []
 # Template routes
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
+    """
+    Render the home page with recent news and partners.
+
+    This view assembles recent news items and partner logos for display
+    on the landing page.
+
+    Parameters
+    ----------
+    request : fastapi.Request
+        The incoming request.
+
+    Returns
+    -------
+    fastapi.responses.HTMLResponse
+        Rendered template response.
+
+    See Also
+    --------
+    actualities : News listing page
+    partners : Partners page
+
+    Examples
+    --------
+    Access via browser: ``GET /``
+    """
     lang = get_language(request)
     news_items = []
     for n in SAMPLE_NEWS:
@@ -969,6 +1051,23 @@ async def home(request: Request):
 
 @app.get("/about", response_class=HTMLResponse)
 async def about(request: Request):
+    """
+    Render the about page.
+
+    Parameters
+    ----------
+    request : fastapi.Request
+        The incoming request.
+
+    Returns
+    -------
+    fastapi.responses.HTMLResponse
+        Rendered template response.
+
+    Examples
+    --------
+    ``GET /about``
+    """
     return templates.TemplateResponse(
         name="about.html", request=request, context=ctx(request)
     )
@@ -976,6 +1075,23 @@ async def about(request: Request):
 
 @app.get("/events")
 async def events(request: Request):
+    """
+    Render the events listing page using sample events data.
+
+    Parameters
+    ----------
+    request : fastapi.Request
+        The incoming request.
+
+    Returns
+    -------
+    fastapi.responses.HTMLResponse
+        Rendered template response.
+
+    Examples
+    --------
+    ``GET /events``
+    """
     lang = get_language(request)
     items = []
     for e in SAMPLE_EVENTS:
@@ -997,6 +1113,25 @@ async def events(request: Request):
 
 @app.get("/events/{event_id}")
 async def event_detail(event_id: int, request: Request):
+    """
+    Render a single event page.
+
+    Parameters
+    ----------
+    event_id : int
+        Identifier of the event to display.
+    request : fastapi.Request
+        The incoming request.
+
+    Returns
+    -------
+    fastapi.responses.HTMLResponse
+        Rendered template response.
+
+    Examples
+    --------
+    ``GET /events/1``
+    """
     lang = get_language(request)
     found = next((e for e in SAMPLE_EVENTS if e["id"] == event_id), None)
     if not found:
@@ -1016,6 +1151,23 @@ async def event_detail(event_id: int, request: Request):
 
 @app.get("/actualities")
 async def actualities(request: Request):
+    """
+    Render the news (actualities) listing page.
+
+    Parameters
+    ----------
+    request : fastapi.Request
+        The incoming request.
+
+    Returns
+    -------
+    fastapi.responses.HTMLResponse
+        Rendered template response.
+
+    Examples
+    --------
+    ``GET /actualities``
+    """
     lang = get_language(request)
     items = []
     for n in SAMPLE_NEWS:
@@ -1037,6 +1189,25 @@ async def actualities(request: Request):
 
 @app.get("/actualities/{news_id}")
 async def news_detail(news_id: int, request: Request):
+    """
+    Render a single news page.
+
+    Parameters
+    ----------
+    news_id : int
+        Identifier of the news item.
+    request : fastapi.Request
+        The incoming request.
+
+    Returns
+    -------
+    fastapi.responses.HTMLResponse
+        Rendered template response.
+
+    Examples
+    --------
+    ``GET /actualities/2``
+    """
     lang = get_language(request)
     found = next((n for n in SAMPLE_NEWS if n["id"] == news_id), None)
     if not found:
@@ -1057,6 +1228,19 @@ async def news_detail(news_id: int, request: Request):
 
 @app.get("/communities")
 async def communities(request: Request):
+    """
+    Render the communities page.
+
+    Parameters
+    ----------
+    request : fastapi.Request
+        The incoming request.
+
+    Returns
+    -------
+    fastapi.responses.HTMLResponse
+        Rendered template response.
+    """
     return templates.TemplateResponse(
         request=request, name="communities.html", context=ctx(request)
     )
@@ -1064,6 +1248,19 @@ async def communities(request: Request):
 
 @app.get("/join")
 async def join(request: Request):
+    """
+    Render the join page (membership form).
+
+    Parameters
+    ----------
+    request : fastapi.Request
+        The incoming request.
+
+    Returns
+    -------
+    fastapi.responses.HTMLResponse
+        Rendered template response.
+    """
     return templates.TemplateResponse(
         request=request, name="join.html", context=ctx(request)
     )
@@ -1071,6 +1268,19 @@ async def join(request: Request):
 
 @app.get("/contact")
 async def contact(request: Request):
+    """
+    Render the contact page (contact form).
+
+    Parameters
+    ----------
+    request : fastapi.Request
+        The incoming request.
+
+    Returns
+    -------
+    fastapi.responses.HTMLResponse
+        Rendered template response.
+    """
     return templates.TemplateResponse(
         request=request, name="contact.html", context=ctx(request)
     )
@@ -1078,6 +1288,19 @@ async def contact(request: Request):
 
 @app.get("/code-of-conduct")
 async def code_of_conduct(request: Request):
+    """
+    Render the Code of Conduct page.
+
+    Parameters
+    ----------
+    request : fastapi.Request
+        The incoming request.
+
+    Returns
+    -------
+    fastapi.responses.HTMLResponse
+        Rendered template response.
+    """
     return templates.TemplateResponse(
         request=request, name="code_of_conduct.html", context=ctx(request)
     )
@@ -1085,6 +1308,19 @@ async def code_of_conduct(request: Request):
 
 @app.get("/partners")
 async def partners(request: Request):
+    """
+    Render the partners page with current partners.
+
+    Parameters
+    ----------
+    request : fastapi.Request
+        The incoming request.
+
+    Returns
+    -------
+    fastapi.responses.HTMLResponse
+        Rendered template response.
+    """
     return templates.TemplateResponse(
         request=request,
         name="partners.html",
@@ -1094,6 +1330,23 @@ async def partners(request: Request):
 
 @app.post("/api/v1/partnership")
 async def partnership_submit(request: PartnershipRequest):
+    """
+    Receive partnership form submissions as JSON.
+
+    Parameters
+    ----------
+    request : PartnershipRequest
+        The validated partnership payload.
+
+    Returns
+    -------
+    fastapi.responses.JSONResponse
+        Status indicating receipt of the request.
+
+    Examples
+    --------
+    ``POST /api/v1/partnership`` with JSON body
+    """
     PARTNERSHIP_REQUESTS.append(request.dict())
     # Here you would normally send an email or store the request in a DB
     return JSONResponse(content={"status": "received"})
@@ -1101,6 +1354,21 @@ async def partnership_submit(request: PartnershipRequest):
 
 @app.post("/api/v1/join")
 async def join_submit(request: Request):
+    """
+    Receive join form submissions (JSON or form-encoded).
+
+    Requires consent checkboxes to be set; otherwise returns 400.
+
+    Parameters
+    ----------
+    request : fastapi.Request
+        The incoming request containing form or JSON payload.
+
+    Returns
+    -------
+    fastapi.responses.JSONResponse
+        Status indicating receipt of the request, or 400 on consent missing.
+    """
     # Accept form-encoded or JSON
     data = {}
     ct = request.headers.get("content-type", "")
@@ -1123,6 +1391,21 @@ async def join_submit(request: Request):
 
 @app.post("/api/v1/contact")
 async def contact_submit(request: Request):
+    """
+    Receive contact form submissions (JSON or form-encoded).
+
+    Requires consent checkboxes to be set; otherwise returns 400.
+
+    Parameters
+    ----------
+    request : fastapi.Request
+        The incoming request containing form or JSON payload.
+
+    Returns
+    -------
+    fastapi.responses.JSONResponse
+        Status indicating receipt of the message, or 400 on consent missing.
+    """
     data = {}
     ct = request.headers.get("content-type", "")
     if "application/json" in ct:
@@ -1142,6 +1425,19 @@ async def contact_submit(request: Request):
 
 @app.get("/gallery")
 async def gallery(request: Request):
+    """
+    Render the gallery page with external links.
+
+    Parameters
+    ----------
+    request : fastapi.Request
+        The incoming request.
+
+    Returns
+    -------
+    fastapi.responses.HTMLResponse
+        Rendered template response.
+    """
     return templates.TemplateResponse(
         request=request,
         name="gallery.html",
@@ -1151,6 +1447,19 @@ async def gallery(request: Request):
 
 @app.get("/privacy")
 async def privacy(request: Request):
+    """
+    Render the privacy policy page.
+
+    Parameters
+    ----------
+    request : fastapi.Request
+        The incoming request.
+
+    Returns
+    -------
+    fastapi.responses.HTMLResponse
+        Rendered template response.
+    """
     return templates.TemplateResponse(
         request=request, name="privacy.html", context=ctx(request)
     )

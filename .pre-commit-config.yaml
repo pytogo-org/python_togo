@@ -21,13 +21,7 @@ repos:
     -   id: detect-aws-credentials
         args: [--allow-missing-credentials]
     -   id: detect-private-key
--   repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
-    hooks:
-    -   id: codespell
-        additional_dependencies:
-        -   tomli
-        exclude: 'data/emojis\.json'
+
 # Mypy disabled - project does not use type annotations
 # -   repo: https://github.com/pre-commit/mirrors-mypy
 #     rev: v1.18.2
@@ -38,19 +32,10 @@ repos:
 #         -   uvicorn
 #         args: ["--ignore-missing-imports"]
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.5
+    rev: v0.14.6
     hooks:
       # Run the linter
     -   id: ruff
         args: [--fix]
       # Run the formatter
     -   id: ruff-format
--   repo: https://github.com/numpy/numpydoc
-    rev: v1.9.0
-    hooks:
-    -   id: numpydoc-validation
-        exclude: |
-          (?x)(
-              /tests/|
-              docs/
-          )

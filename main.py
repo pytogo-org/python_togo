@@ -1299,9 +1299,12 @@ async def partnership_submit(request: PartnershipRequest):
         data = PartnershipRequest(**data)
     
     try:
-       validate_email(data.email, check_deliverability=True)
-    except EmailNotValidError as e:
-        return JSONResponse(status_code=400, content={"error": "Please use a valide email"})
+        validate_email(data.email, check_deliverability=True)
+    except EmailNotValidError:
+        return JSONResponse(
+            status_code=400,
+            content={"error": "Please use a valide email"},
+        )
 
     # Normalize boolean fields
     agree_privacy = data.agree_privacy in (True, "true", "True", "on", "1", 1)
@@ -1346,9 +1349,12 @@ async def join_submit(request: Request):
         data = JoinRequest(**data)
     
     try:
-       validate_email(data.email, check_deliverability=True)
-    except EmailNotValidError as e:
-        return JSONResponse(status_code=400, content={"error": "Please use a valide email"})
+        validate_email(data.email, check_deliverability=True)
+    except EmailNotValidError:
+        return JSONResponse(
+            status_code=400,
+            content={"error": "Please use a valide email"},
+        )
 
     # Normalize boolean fields
     agree_privacy = data.agree_privacy in (True, "true", "True", "on", "1", 1)
@@ -1393,11 +1399,14 @@ async def contact_submit(request: Request):
         data = ContactSubmit(**data)
 
     try:
-       validate_email(data.email, check_deliverability=True)
-    except EmailNotValidError as e:
-        return JSONResponse(status_code=400, content={"error": "Please use a valide email"})
+        validate_email(data.email, check_deliverability=True)
+    except EmailNotValidError:
+        return JSONResponse(
+            status_code=400,
+            content={"error": "Please use a valide email"},
+        )
     
-    agree_privacy = data.agree_coc in (True, "true", "True", "on", "1", 1)
+    agree_privacy = data.agree_privacy in (True, "true", "True", "on", "1", 1)
     agree_coc = data.agree_coc in (True, "true", "True", "on", "1", 1)
     if not agree_privacy or not agree_coc:
         return JSONResponse(status_code=400, content={"error": "consent_required"})

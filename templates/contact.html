@@ -7,7 +7,7 @@
         <h2>{{ t.get('contact-title','Contact') }}</h2>
         <p>{{ t.get('contact-intro','Pour toute question, envoyez-nous un message via le formulaire.') }}</p>
         <div class="form-container">
-            <form id="contact-form" method="post" action="/api/v1/contact" data-consent="{{ t.get('consent-alert','Veuillez accepter la politique de confidentialité et le Code de conduite avant de continuer.') }}">
+            <form id="contact-form" data-consent="{{ t.get('consent-alert','Veuillez accepter la politique de confidentialité et le Code de conduite avant de continuer.') }}">
                 <div class="form-group">
                     <label for="name">{{ t.get('label-name','Nom') }} *</label>
                     <input type="text" id="name" name="name" required>
@@ -32,21 +32,48 @@
                 </div>
                 <button type="submit" class="btn">{{ t.get('btn-send','Envoyer') }}</button>
             </form>
+            <div id="contact-result" role="status" aria-live="polite"></div>
         </div>
     </section>
 {% endblock %}
 
     {% block scripts %}
     <script>
-    document.getElementById('contact-form').addEventListener('submit', function(e){
+    document.getElementById('contact-form').addEventListener('submit', async function(e){
+        e.preventDefault();
+        const form = e.target;
         const p = document.getElementById('agree_privacy');
         const c = document.getElementById('agree_coc');
-        if (!p || !c) return;
+        const resEl = document.getElementById('contact-result');
         if (!p.checked || !c.checked) {
-            e.preventDefault();
-            const msg = document.getElementById('contact-form').dataset.consent || 'Veuillez accepter la politique de confidentialité et le Code de conduite avant de continuer.';
-            alert(msg);
-            return false;
+            const msg = form.dataset.consent || 'Veuillez accepter la politique de confidentialité et le Code de conduite avant de continuer.';
+            resEl.textContent = msg;
+            return;
+        }
+        const data = {
+            name: form.name.value,
+            email: form.email.value,
+            subject: form.subject.value,
+            message: form.message.value,
+            agree_privacy: p.checked,
+            agree_coc: c.checked
+        };
+        resEl.textContent = '{{ t.get("partners-sending","Envoi en cours...") }}';
+        try {
+            const resp = await fetch('/api/v1/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (resp.ok) {
+                resEl.textContent = '{{ t.get("partners-success","Demande envoyée, merci !") }}';
+                form.reset();
+            } else {
+                const txt = await resp.text();
+                resEl.textContent = '{{ t.get("partners-error-prefix","Erreur: ") }}' + txt;
+            }
+        } catch (err) {
+            resEl.textContent = '{{ t.get("partners-network-error-prefix","Erreur réseau: ") }}' + err.message;
         }
     });
     </script>

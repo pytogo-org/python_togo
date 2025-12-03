@@ -12,19 +12,19 @@ Notes
 - Sample data for events and news is kept in-memory for simplicity.
 """
 
-import os
-import json
 from datetime import date
+import json
+import os
 from typing import List, Optional
-from supabase import create_client, Client
-from dotenv import load_dotenv
 
+from dotenv import load_dotenv
+from email_validator import EmailNotValidError, validate_email
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from email_validator import validate_email, EmailNotValidError
+from supabase import Client, create_client
 
 app = FastAPI(title="Python Togo")
 
@@ -865,13 +865,12 @@ current_year = date.today().strftime("%Y")
 
 
 class JoinRequest(BaseModel):
-    name: str
+    full_name: str
     email: str
-    phone: str | None = None
-    city: str | None = None
-    level: str | None = None
-    interests: str | None = None
-
+    city: Optional[str] = None
+    level: Optional[str] = None
+    agree_privacy: bool
+    agree_coc: bool
 
 
 class PartnershipRequest(BaseModel):
@@ -880,6 +879,8 @@ class PartnershipRequest(BaseModel):
     email: str
     website: Optional[str] = None
     message: Optional[str] = None
+    agree_privacy: bool
+    agree_coc: bool
 
 
 class ContactSubmit(BaseModel):
@@ -893,12 +894,12 @@ class ContactSubmit(BaseModel):
 
 def get_data(table):
     """Fetch all data from a given Supabase table.
-    
+
     Parameters
     ----------
     table : str
         The name of the table to query.
-    
+
     Returns
     -------
     list of dict
@@ -906,9 +907,15 @@ def get_data(table):
     """
     try:
         response = supabase.table(table).select("*").execute()
-        return response.data
-    except Exception:
+        if hasattr(response, "data"):
+            return response.data or []
+        elif isinstance(response, dict):
+            return response.get("data", []) or []
         return []
+    except Exception as e:
+        print(f"Error fetching data from {table}: {e}")
+        return []
+
 
 def insert_data(table, data):
     """Insert data into a given Supabase table.
@@ -925,11 +932,31 @@ def insert_data(table, data):
         True if insertion was successful, False otherwise.
     """
     try:
-        supabase.table(table).insert(data).execute()
+        # Accept dict/list or JSON string; ensure we send a list of records
+        payload = data
+        if isinstance(data, str):
+            try:
+                payload = json.loads(data)
+            except Exception:
+                payload = {"payload": data}
+        if isinstance(payload, dict):
+            payload = [payload]
+
+        print(f"Inserting into {table}: {payload}")
+        resp = supabase.table(table).insert(payload[0]).execute()
+        err = None
+        if hasattr(resp, "error"):
+            err = resp.error
+        elif isinstance(resp, dict):
+            err = resp.get("error")
+        if err:
+            print(f"Supabase insert error into {table}: {err}")
+            return False
         return True
     except Exception as e:
         print(f"Error inserting data into {table}: {e}")
         return False
+
 
 PARTNERS = get_data("partners")
 
@@ -1167,6 +1194,28 @@ async def news_detail(news_id: int, request: Request):
     )
 
 
+@app.get("/partners")
+async def partners(request: Request):
+    """
+    Render the partners page.
+
+    Parameters
+    ----------
+    request : fastapi.Request
+        The incoming request.
+
+    Returns
+    -------
+    fastapi.responses.HTMLResponse
+        Rendered template response.
+    """
+    return templates.TemplateResponse(
+        request=request,
+        name="partners.html",
+        context=ctx(request, {"partners": PARTNERS}),
+    )
+
+
 @app.get("/communities")
 async def communities(request: Request):
     """
@@ -1247,73 +1296,61 @@ async def code_of_conduct(request: Request):
     )
 
 
-@app.get("/partners")
-async def partners(request: Request):
-    """
-    Render the partners page with current partners.
-
-    Parameters
-    ----------
-    request : fastapi.Request
-        The incoming request.
-
-    Returns
-    -------
-    fastapi.responses.HTMLResponse
-        Rendered template response.
-    """
-    return templates.TemplateResponse(
-        request=request,
-        name="partners.html",
-        context=ctx(request, {"partners": PARTNERS}),
-    )
-
-
 @app.post("/api/v1/partnership")
-async def partnership_submit(request: PartnershipRequest):
+async def partnership_submit(request: Request):
     """
     Receive partnership form submissions as JSON.
 
     Parameters
     ----------
-    request : PartnershipRequest
-        The validated partnership payload.
+    request : fastapi.Request
+        The incoming request (JSON or form).
 
     Returns
     -------
     fastapi.responses.JSONResponse
         Status indicating receipt of the request.
-
-    Examples
-    --------
-    ``POST /api/v1/partnership`` with JSON body
     """
-    data = {}
     ct = request.headers.get("content-type", "")
     if "application/json" in ct:
-        data = await request.json()
-        data = PartnershipRequest(**data)
+        payload = await request.json()
     else:
         form = await request.form()
-        data = dict(form)
-        data = PartnershipRequest(**data)
-    
+        payload = dict(form)
+
+    print(f"Partnership payload: {payload}")
+
+    data = PartnershipRequest(**payload)
+
+    print(data)
     try:
         validate_email(data.email, check_deliverability=True)
     except EmailNotValidError:
         return JSONResponse(
-            status_code=400,
-            content={"error": "Please use a valide email"},
+            status_code=400, content={"error": "Please use a valid email"}
         )
 
-    # Normalize boolean fields
-    agree_privacy = data.agree_privacy in (True, "true", "True", "on", "1", 1)
-    agree_coc = data.agree_coc in (True, "true", "True", "on", "1", 1)
+    # Normalize boolean fields (coerce possible string values)
+    agree_privacy = getattr(data, "agree_privacy", False) in (
+        True,
+        "true",
+        "True",
+        "on",
+        "1",
+        1,
+    )
+    agree_coc = getattr(data, "agree_coc", False) in (
+        True,
+        "true",
+        "True",
+        "on",
+        "1",
+        1,
+    )
     if not agree_privacy or not agree_coc:
         return JSONResponse(status_code=400, content={"error": "consent_required"})
-    
-    data = json.dumps(data.dict())
-    inserted = insert_data("partnershiprequest", data)
+
+    inserted = insert_data("partnershiprequest", data.dict())
     if inserted:
         return JSONResponse(content={"status": "received"})
     else:
@@ -1337,33 +1374,43 @@ async def join_submit(request: Request):
     fastapi.responses.JSONResponse
         Status indicating receipt of the request, or 400 on consent missing.
     """
-    # Accept form-encoded or JSON
-    data = {}
     ct = request.headers.get("content-type", "")
     if "application/json" in ct:
-        data = await request.json()
-        data = JoinRequest(**data)
+        payload = await request.json()
     else:
         form = await request.form()
-        data = dict(form)
-        data = JoinRequest(**data)
-    
+        payload = dict(form)
+
+    data = JoinRequest(**payload)
+
     try:
         validate_email(data.email, check_deliverability=True)
     except EmailNotValidError:
         return JSONResponse(
-            status_code=400,
-            content={"error": "Please use a valide email"},
+            status_code=400, content={"error": "Please use a valid email"}
         )
 
     # Normalize boolean fields
-    agree_privacy = data.agree_privacy in (True, "true", "True", "on", "1", 1)
-    agree_coc = data.agree_coc in (True, "true", "True", "on", "1", 1)
+    agree_privacy = getattr(data, "agree_privacy", False) in (
+        True,
+        "true",
+        "True",
+        "on",
+        "1",
+        1,
+    )
+    agree_coc = getattr(data, "agree_coc", False) in (
+        True,
+        "true",
+        "True",
+        "on",
+        "1",
+        1,
+    )
     if not agree_privacy or not agree_coc:
         return JSONResponse(status_code=400, content={"error": "consent_required"})
-    
-    data = json.dumps(data.dict())
-    inserted = insert_data("members", data)
+
+    inserted = insert_data("members", data.dict())
     if inserted:
         return JSONResponse(content={"status": "received"})
     else:
@@ -1387,38 +1434,46 @@ async def contact_submit(request: Request):
     fastapi.responses.JSONResponse
         Status indicating receipt of the message, or 400 on consent missing.
     """
-    data = {}
     ct = request.headers.get("content-type", "")
-    
     if "application/json" in ct:
-        data = await request.json()
-        data = ContactSubmit(**data)  # validate
+        payload = await request.json()
     else:
         form = await request.form()
-        data = dict(form)
-        data = ContactSubmit(**data)
+        payload = dict(form)
+
+    data = ContactSubmit(**payload)
 
     try:
         validate_email(data.email, check_deliverability=True)
     except EmailNotValidError:
         return JSONResponse(
-            status_code=400,
-            content={"error": "Please use a valide email"},
+            status_code=400, content={"error": "Please use a valid email"}
         )
-    
-    agree_privacy = data.agree_privacy in (True, "true", "True", "on", "1", 1)
-    agree_coc = data.agree_coc in (True, "true", "True", "on", "1", 1)
+
+    agree_privacy = getattr(data, "agree_privacy", False) in (
+        True,
+        "true",
+        "True",
+        "on",
+        "1",
+        1,
+    )
+    agree_coc = getattr(data, "agree_coc", False) in (
+        True,
+        "true",
+        "True",
+        "on",
+        "1",
+        1,
+    )
     if not agree_privacy or not agree_coc:
         return JSONResponse(status_code=400, content={"error": "consent_required"})
 
-    data = json.dumps(data.dict())
- 
-    inserted = insert_data("contacts", data)
+    inserted = insert_data("contacts", data.dict())
     if inserted:
         return JSONResponse(content={"status": "received"})
     else:
         return JSONResponse(content={"status": "Failed"})
-    
 
 
 @app.get("/gallery")

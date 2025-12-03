@@ -40,7 +40,9 @@ header {
     justify-content: space-between;
     align-items: center;
     gap: 125px;
+    font-weight: lighter;
 }
+
 
 .site-logo img { display:block; width:120px; height:auto; }
 .header-actions { display:flex; align-items:center; gap:12px; }
@@ -244,9 +246,9 @@ nav ul { flex-wrap: nowrap; }
 .partner-placeholder { padding: 10px; font-weight: 600; color: #666; }
 
 /* Donate button container */
-.donate-top { display: inline-flex; align-items:center; margin-left:12px; }
+.donate-top { display: inline-flex; align-items:center; margin-left:12px; font-weight: bolder; }
 .donate-footer { text-align: left; margin-top: 12px; }
-.donate-button { display:inline-block; padding:6px 12px; background:#ffd700; color:#000; border-radius:6px; text-decoration:none; border:1px solid #e0b700; min-width:120px; text-align:center; }
+.donate-button { display:inline-block; padding:6px 12px; background: #fabc21; color:#000; border-radius:6px; text-decoration:none; border:1px solid #e0b700; min-width:120px; text-align:center;}
 .donate-button:hover { filter:brightness(0.95); }
 
 /* Footer recognition / credits */

@@ -86,7 +86,9 @@ document.getElementById('partnership-form').addEventListener('submit', async fun
         contact_name: form.contact_name.value,
         email: form.email.value,
         website: form.website.value || null,
-        message: form.message.value || null
+        message: form.message.value || null,
+        agree_privacy: pchk.checked,
+        agree_coc: cchk.checked
     };
 
     const resEl = document.getElementById('partnership-result');

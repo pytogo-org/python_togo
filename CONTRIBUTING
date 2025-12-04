@@ -1,0 +1,64 @@
+CONTRIBUTING
+============
+
+Thanks for your interest in contributing to pythontogo. This document explains how to report issues and submit changes so they can be reviewed and merged quickly.
+
+1. Code of conduct
+    - Be respectful and constructive.
+    - File issues or PRs for behavior concerns.
+
+2. Reporting bugs / requesting features
+    - Search existing issues first.
+    - Open a new issue with:
+      - Clear title
+      - Short reproduction steps or expected behavior
+      - Environment (OS, Python version, package version)
+      - Minimal reproducible example if applicable
+
+3. Development setup
+    - Clone your fork and create a branch:
+      - git clone https://github.com/your-username/pythontogo.git
+      - git checkout -b feature/short-description
+    - Create and activate a virtual environment:
+      - python -m venv .venv
+      - source .venv/bin/activate  (or .venv\Scripts\activate on Windows)
+    - Install development dependencies:
+      - pip install -r requirements-dev.txt
+
+4. Style and tests
+    - Follow existing project style (PEP 8). We run linters and type checks in CI.
+    - Add tests for new features/bugfixes using pytest.
+    - Run tests locally:
+      - pytest
+    - Run linters:
+      - flake8
+      - mypy (if used)
+
+5. Commits and pull requests
+    - Keep commits focused and atomic.
+    - Use clear commit messages: "module: brief description" or "Fix: brief description".
+    - Rebase or squash if requested by maintainers.
+    - Open a PR from your fork to the main branch with:
+      - Description of the change
+      - Linked issue (if any)
+      - Testing steps and CI status
+    - Ensure all CI checks pass before requesting review.
+
+6. Documentation
+    - Update docs for public API changes or new features.
+    - Keep docstrings clear and concise.
+    - Include examples where helpful.
+
+7. API stability and deprecations
+    - Avoid breaking public APIs unless necessary.
+    - When removing or changing behavior, add deprecation warnings and document the migration path.
+
+8. Licensing and copyright
+    - By contributing you agree to license your contribution under the project's license.
+    - Avoid copying large blocks of code from other projects without compatible licensing.
+
+9. Help and communication
+    - If unsure, open an issue to discuss the approach before implementing.
+    - For quick questions, use the issue tracker or project communication channels if available.
+
+Thank you for improving pythontogo. Contributions are welcome and appreciated!

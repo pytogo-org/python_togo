@@ -489,7 +489,7 @@ TRANSLATIONS = {
     },
     "en": {
         "site-title": "Python Togo",
-        "nav-home": "The Python Software Community Togo",
+        "nav-home": "Home",
         "nav-about": "About",
         "nav-code": "Code of Conduct",
         "nav-events": "Events",

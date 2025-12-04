@@ -17,7 +17,7 @@ Thanks for your interest in contributing to pythontogo. This document explains h
 
 3. Development setup
     - Clone your fork and create a branch:
-      - git clone https://github.com/your-username/python_togo.git
+      - git clone https://github.com/your-username/pythontogo.git
       - git checkout -b feature/short-description
     - Create and activate a virtual environment:
       - python -m venv .venv
